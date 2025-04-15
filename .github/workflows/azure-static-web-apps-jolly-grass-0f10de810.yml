@@ -15,37 +15,34 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout do repositório principal
+        uses: actions/checkout@v3
         with:
-          submodules: true
+          submodules: false
           lfs: false
 
-      - name: Clonar repositório privado Fontes
+      - name: Clonar repositório público Fontes
         run: |
-          echo "Clonando repositório Fontes..."
-          git clone https://x-access-token:${{ secrets.FONTES_PAT }}@github.com/GPincinato/Fontes.git || {
-            echo "❌ Falha ao clonar repositório Fontes. Verifique o token ou permissões.";
-            exit 1;
-          }
+          echo "🔄 Clonando repositório público Fontes..."
+          git clone https://github.com/GPincinato/Fontes.git Fontes
 
-      - name: Build And Deploy
+      - name: Build and Deploy para Azure Static Web App
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_JOLLY_GRASS_0F10DE810 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Para comentários em PRs, etc.
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # para integração com PRs
           action: "upload"
-          app_location: "/"              # Caminho da aplicação web
-          api_location: "Fontes"         # Caminho onde o repo Fontes foi clonado
-          output_location: ""            # Diretório de build, se aplicável
+          app_location: "/"            # Diretório da app frontend
+          api_location: "Fontes"       # API agora clonada localmente
+          output_location: ""          # Se houver build estático, defina aqui
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Close Pull Request Job
     steps:
-      - name: Close Pull Request
-        id: closepullrequest
+      - name: Fechar PR no Static Web App
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_JOLLY_GRASS_0F10DE810 }}
