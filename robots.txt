@@ -1,0 +1,16 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /cgi-bin/
+Disallow: /tmp/
+Disallow: /private/
+
+# Bloqueia parâmetros de URL específicos (se aplicável)
+Disallow: /*?sessionid=
+Disallow: /*?action=
+
+# Permitir rastreamento completo do restante do site
+Allow: /
+
+# Referência ao sitemap
+Sitemap: https://www.solaristech.com.br/sitemap.xml
+
